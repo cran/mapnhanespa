@@ -19,15 +19,33 @@ study_data <- data.frame(
 map_nhanes_pa_quantiles(study_data, id = "id")
 
 ## -----------------------------------------------------------------------------
-measures <- data.frame(
-  id = c("P01", "P01", "P01"),
+all_measures <- data.frame(
+  id = rep("P01", 9),
   age = 25,
   sex = "Female",
-  measure = c("mims", "PAXMTSM", "total_PAXMTSM"),
-  value = 15000
+  measure = c("total_activity_counts", "total_log10AC", "total_PAXMTSM",
+              "total_log10PAXMTSM", "total_scsslsteps", "total_scrfsteps",
+              "total_oaksteps", "total_vssteps", "total_vsrevsteps"),
+  value = c(2773035, 3039, 14653, 1043, 8694, 11421, 12055, 9505, 9631)
+)
+
+map_nhanes_pa_quantiles(all_measures, id = "id")
+
+## -----------------------------------------------------------------------------
+nhanes_pa_measure_map()
+
+## -----------------------------------------------------------------------------
+measures <- data.frame(
+  id = rep("P01", 4),
+  age = 25,
+  sex = "Female",
+  measure = c("mims", "PAXMTSM", "total_ac", "total_activity_counts"),
+  value = c(15000, 15000, 2773035, 2773035)
 )
 
 map_nhanes_pa_quantiles(measures, id = "id")
+
+nhanes_pa_measure_cdf("total_activity_counts", age = 25, sex = "Female")(2773035)
 
 ## -----------------------------------------------------------------------------
 map_nhanes_pa_quantiles(study_data, id = "id")

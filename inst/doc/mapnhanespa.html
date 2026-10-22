@@ -149,6 +149,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 div.csl-bib-body { }
 div.csl-entry {
 clear: both;
+margin-bottom: 0em;
 }
 .hanging div.csl-entry {
 margin-left:2em;
@@ -384,9 +385,10 @@ relative to the NHANES reference distribution.</p>
 <p>The CDFs in this package are based on NHANES 2011-2014 activity
 count, MIMS, and step-count summaries. The step-count measures relate to
 work applying multiple step-counting algorithms to high-resolution wrist
-accelerometry data from NHANES 2011-2014 <span class="citation">(Koffman
-et al. 2025)</span>. The minute-level NHANES step count and physical
-activity data are also available through PhysioNet <span class="citation">(Koffman and Muschelli 2025)</span>.</p>
+accelerometry data from NHANES 2011-2014 <span class="citation">(Koffman, Crainiceanu, and Muschelli 2025)</span>. The
+minute-level NHANES step count and physical activity data are also
+available through PhysioNet <span class="citation">(Koffman and
+Muschelli 2025)</span>.</p>
 </div>
 <div id="basic-mapping" class="section level2">
 <h2>Basic Mapping</h2>
@@ -401,43 +403,146 @@ one row per participant-measure observation.</p>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>)</span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
 <span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value nhanes_quantile</span></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000       0.5349443</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500       0.3527381</span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000       0.1322205</span></span></code></pre></div>
-<p>The <code>measure</code> column accepts common aliases:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>measures <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">id =</span> <span class="fu">c</span>(<span class="st">&quot;P01&quot;</span>, <span class="st">&quot;P01&quot;</span>, <span class="st">&quot;P01&quot;</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value age_category_pa_map nhanes_quantile</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000             [20,30)       0.5349443</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500             [60,70)       0.3527381</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000             [80,85)       0.1322205</span></span></code></pre></div>
+<p>The returned <code>age_category_pa_map</code> column shows the NHANES
+age category used to select each participant’s CDF. The following
+example covers all nine supported summaries:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>all_measures <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">id =</span> <span class="fu">rep</span>(<span class="st">&quot;P01&quot;</span>, <span class="dv">9</span>),</span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">age =</span> <span class="dv">25</span>,</span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">sex =</span> <span class="st">&quot;Female&quot;</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">measure =</span> <span class="fu">c</span>(<span class="st">&quot;mims&quot;</span>, <span class="st">&quot;PAXMTSM&quot;</span>, <span class="st">&quot;total_PAXMTSM&quot;</span>),</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">value =</span> <span class="dv">15000</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>)</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(measures, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;    id age    sex       measure value nhanes_quantile</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female          mims 15000       0.5349443</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 2 P01  25 Female       PAXMTSM 15000       0.5349443</span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 3 P01  25 Female total_PAXMTSM 15000       0.5349443</span></span></code></pre></div>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">measure =</span> <span class="fu">c</span>(<span class="st">&quot;total_activity_counts&quot;</span>, <span class="st">&quot;total_log10AC&quot;</span>, <span class="st">&quot;total_PAXMTSM&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>              <span class="st">&quot;total_log10PAXMTSM&quot;</span>, <span class="st">&quot;total_scsslsteps&quot;</span>, <span class="st">&quot;total_scrfsteps&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>              <span class="st">&quot;total_oaksteps&quot;</span>, <span class="st">&quot;total_vssteps&quot;</span>, <span class="st">&quot;total_vsrevsteps&quot;</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">2773035</span>, <span class="dv">3039</span>, <span class="dv">14653</span>, <span class="dv">1043</span>, <span class="dv">8694</span>, <span class="dv">11421</span>, <span class="dv">12055</span>, <span class="dv">9505</span>, <span class="dv">9631</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(all_measures, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt;    id age    sex               measure   value age_category_pa_map</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female total_activity_counts 2773035             [20,30)</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 2 P01  25 Female         total_log10AC    3039             [20,30)</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 3 P01  25 Female         total_PAXMTSM   14653             [20,30)</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 4 P01  25 Female    total_log10PAXMTSM    1043             [20,30)</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; 5 P01  25 Female      total_scsslsteps    8694             [20,30)</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; 6 P01  25 Female       total_scrfsteps   11421             [20,30)</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; 7 P01  25 Female        total_oaksteps   12055             [20,30)</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; 8 P01  25 Female         total_vssteps    9505             [20,30)</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; 9 P01  25 Female      total_vsrevsteps    9631             [20,30)</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt;   nhanes_quantile</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; 1       0.4852706</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; 2       0.5714842</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt; 3       0.4873396</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt; 4       0.5564848</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="co">#&gt; 5       0.5872852</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a><span class="co">#&gt; 6       0.4938108</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a><span class="co">#&gt; 7       0.4892558</span></span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="co">#&gt; 8       0.5019565</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co">#&gt; 9       0.5158600</span></span></code></pre></div>
+<p>The complete list of accepted names and the summary used for each CDF
+is available from <code>nhanes_pa_measure_map()</code>. Other names
+return <code>NA</code> with a warning listing the unmapped measures.
+Each <code>value</code> should be calculated using the summary named in
+the map and supplied on that summary’s scale.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">nhanes_pa_measure_map</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt;                    measure      summary</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; 1                       AC           AC</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; 2          activity_counts           AC</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; 3           activitycounts           AC</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 4                   counts           AC</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 5                 total_AC           AC</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 6    total_activity_counts           AC</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 7                  log10AC      log10AC</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; 8    log10_activity_counts      log10AC</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; 9             log10_counts      log10AC</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; 10           total_log10AC      log10AC</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; 11                 PAXMTSM      PAXMTSM</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; 12                    mims      PAXMTSM</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; 13               mims_unit      PAXMTSM</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; 14           total_PAXMTSM      PAXMTSM</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; 15            log10PAXMTSM log10PAXMTSM</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; 16              log10_mims log10PAXMTSM</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; 17      total_log10PAXMTSM log10PAXMTSM</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; 18         log10_mims_unit log10PAXMTSM</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; 19              scsslsteps   scsslsteps</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; 20               ssl_steps   scsslsteps</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; 21            sslstepcount   scsslsteps</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt; 22           sslstepcounts   scsslsteps</span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt; 23         total_ssl_steps   scsslsteps</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt; 24        total_scsslsteps   scsslsteps</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co">#&gt; 25     steps_stepcount_ssl   scsslsteps</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co">#&gt; 26    steps_stepcounts_ssl   scsslsteps</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co">#&gt; 27               scrfsteps    scrfsteps</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt; 28                rf_steps    scrfsteps</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="co">#&gt; 29             rfstepcount    scrfsteps</span></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="co">#&gt; 30            rfstepcounts    scrfsteps</span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co">#&gt; 31          total_rf_steps    scrfsteps</span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="co">#&gt; 32         total_scrfsteps    scrfsteps</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="co">#&gt; 33      steps_stepcount_rf    scrfsteps</span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a><span class="co">#&gt; 34     steps_stepcounts_rf    scrfsteps</span></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co">#&gt; 35                oaksteps     oaksteps</span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co">#&gt; 36             foreststeps     oaksteps</span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="co">#&gt; 37               steps_oak     oaksteps</span></span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a><span class="co">#&gt; 38            steps_forest     oaksteps</span></span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="co">#&gt; 39              nsteps_oak     oaksteps</span></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co">#&gt; 40           nsteps_forest     oaksteps</span></span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co">#&gt; 41          total_oaksteps     oaksteps</span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="co">#&gt; 42  steps_stepcount_forest     oaksteps</span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co">#&gt; 43 steps_stepcounts_forest     oaksteps</span></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co">#&gt; 44                 vssteps      vssteps</span></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co">#&gt; 45        vssteps_original      vssteps</span></span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="co">#&gt; 46       steps_vs_original      vssteps</span></span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co">#&gt; 47           total_vssteps      vssteps</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a><span class="co">#&gt; 48              vsrevsteps   vsrevsteps</span></span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a><span class="co">#&gt; 49         vssteps_revised   vsrevsteps</span></span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a><span class="co">#&gt; 50        steps_vs_revised   vsrevsteps</span></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a><span class="co">#&gt; 51        total_vsrevsteps   vsrevsteps</span></span></code></pre></div>
+<p>The <code>measure</code> column accepts common aliases, including
+<code>total_ac</code> and <code>total_activity_counts</code> for the
+<code>AC</code> CDF:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>measures <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">id =</span> <span class="fu">rep</span>(<span class="st">&quot;P01&quot;</span>, <span class="dv">4</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">age =</span> <span class="dv">25</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">sex =</span> <span class="st">&quot;Female&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">measure =</span> <span class="fu">c</span>(<span class="st">&quot;mims&quot;</span>, <span class="st">&quot;PAXMTSM&quot;</span>, <span class="st">&quot;total_ac&quot;</span>, <span class="st">&quot;total_activity_counts&quot;</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">15000</span>, <span class="dv">15000</span>, <span class="dv">2773035</span>, <span class="dv">2773035</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(measures, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;    id age    sex               measure   value age_category_pa_map</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female                  mims   15000             [20,30)</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; 2 P01  25 Female               PAXMTSM   15000             [20,30)</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; 3 P01  25 Female              total_ac 2773035             [20,30)</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; 4 P01  25 Female total_activity_counts 2773035             [20,30)</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt;   nhanes_quantile</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; 1       0.5349443</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; 2       0.5349443</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; 3       0.4852706</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt; 4       0.4852706</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="fu">nhanes_pa_measure_cdf</span>(<span class="st">&quot;total_activity_counts&quot;</span>, <span class="at">age =</span> <span class="dv">25</span>, <span class="at">sex =</span> <span class="st">&quot;Female&quot;</span>)(<span class="dv">2773035</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; [1] 0.4852706</span></span></code></pre></div>
 </div>
 <div id="combined-and-wave-specific-references" class="section level2">
 <h2>Combined and Wave-Specific References</h2>
 <p>By default, quantiles are evaluated against CDFs estimated from the
 combined 2011-2012 and 2013-2014 NHANES waves.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value nhanes_quantile</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000       0.5349443</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500       0.3527381</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000       0.1322205</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value age_category_pa_map nhanes_quantile</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000             [20,30)       0.5349443</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500             [60,70)       0.3527381</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000             [80,85)       0.1322205</span></span></code></pre></div>
 <p>To map against a specific NHANES wave, provide <code>wave</code>.
 Supported values include the NHANES data release cycles <code>7</code>
 and <code>8</code>, and the year labels <code>&quot;2011-2012&quot;</code> and
 <code>&quot;2013-2014&quot;</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>, <span class="at">wave =</span> <span class="st">&quot;2013-2014&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value nhanes_quantile</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000       0.4943653</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500       0.3820584</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000       0.1181001</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>, <span class="at">wave =</span> <span class="st">&quot;2013-2014&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value age_category_pa_map nhanes_quantile</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000             [20,30)       0.4943653</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500             [60,70)       0.3820584</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000             [80,85)       0.1181001</span></span></code></pre></div>
 </div>
 <div id="overall-age-or-sex-strata" class="section level2">
 <h2>Overall Age or Sex Strata</h2>
@@ -445,26 +550,26 @@ and <code>8</code>, and the year labels <code>&quot;2011-2012&quot;</code> and
 <code>sex = NULL</code>. The participant’s age category is still used,
 but the CDF is selected from the <code>gender == &quot;Overall&quot;</code>
 stratum.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>, <span class="at">sex =</span> <span class="cn">NULL</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value nhanes_quantile</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000       0.5688587</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500       0.4164160</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000       0.1408881</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>, <span class="at">sex =</span> <span class="cn">NULL</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value age_category_pa_map nhanes_quantile</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000             [20,30)       0.5688587</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500             [60,70)       0.4164160</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000             [80,85)       0.1408881</span></span></code></pre></div>
 <p>If a study should be mapped without age stratification, set
 <code>age = NULL</code>. The participant’s sex or gender is still used,
 but the CDF is selected from the <code>cat_age == &quot;Overall&quot;</code>
 stratum.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>, <span class="at">age =</span> <span class="cn">NULL</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value nhanes_quantile</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000      0.53548286</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500      0.28321363</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000      0.01040967</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>, <span class="at">age =</span> <span class="cn">NULL</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value age_category_pa_map nhanes_quantile</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000             Overall      0.53548286</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500             Overall      0.28321363</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000             Overall      0.01040967</span></span></code></pre></div>
 <p>Both options can be combined with a wave-specific reference:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>, <span class="at">sex =</span> <span class="cn">NULL</span>, <span class="at">wave =</span> <span class="dv">7</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value nhanes_quantile</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000       0.6017452</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500       0.3716006</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000       0.1669768</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">map_nhanes_pa_quantiles</span>(study_data, <span class="at">id =</span> <span class="st">&quot;id&quot;</span>, <span class="at">sex =</span> <span class="cn">NULL</span>, <span class="at">wave =</span> <span class="dv">7</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt;    id age    sex   measure   value age_category_pa_map nhanes_quantile</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; 1 P01  25 Female      mims   15000             [20,30)       0.6017452</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; 2 P02  62   Male ssl_steps    7500             [60,70)       0.3716006</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; 3 P03  84 Female        AC 1000000             [80,85)       0.1669768</span></span></code></pre></div>
 <p>The package data do not contain a stratum that is overall for both
 age and sex or gender. Calls that omit both age and sex therefore
 produce an error.</p>
@@ -473,29 +578,29 @@ produce an error.</p>
 <h2>Single Values</h2>
 <p>For a single participant-measure value, use
 <code>nhanes_pa_quantile()</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">nhanes_pa_quantile</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="at">value =</span> <span class="dv">15000</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">age =</span> <span class="dv">25</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">sex =</span> <span class="st">&quot;Female&quot;</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="at">measure =</span> <span class="st">&quot;mims&quot;</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>)</span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; [1] 0.5349443</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">nhanes_pa_quantile</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">value =</span> <span class="dv">15000</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">age =</span> <span class="dv">25</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="at">sex =</span> <span class="st">&quot;Female&quot;</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="at">measure =</span> <span class="st">&quot;mims&quot;</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>)</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; [1] 0.5349443</span></span></code></pre></div>
 <p>The same combined, wave-specific, and overall-stratum options are
 available:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">nhanes_pa_quantile</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">value =</span> <span class="dv">15000</span>,</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="at">age =</span> <span class="dv">25</span>,</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="at">sex =</span> <span class="cn">NULL</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="at">measure =</span> <span class="st">&quot;mims&quot;</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="at">wave =</span> <span class="st">&quot;2011-2012&quot;</span></span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>)</span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; [1] 0.6017452</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">nhanes_pa_quantile</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="at">value =</span> <span class="dv">15000</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="at">age =</span> <span class="dv">25</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="at">sex =</span> <span class="cn">NULL</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="at">measure =</span> <span class="st">&quot;mims&quot;</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="at">wave =</span> <span class="st">&quot;2011-2012&quot;</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>)</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; [1] 0.6017452</span></span></code></pre></div>
 </div>
 <div id="age-categories" class="section level2">
 <h2>Age Categories</h2>
 <p>Ages are mapped into NHANES CDF age categories:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">suppressWarnings</span>(<span class="fu">nhanes_pa_age_category</span>(<span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">25</span>, <span class="dv">84</span>, <span class="dv">90</span>)))</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;[0,10)&quot;  &quot;[20,30)&quot; &quot;[80,85)&quot; &quot;[80,85)&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">suppressWarnings</span>(<span class="fu">nhanes_pa_age_category</span>(<span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">25</span>, <span class="dv">84</span>, <span class="dv">90</span>)))</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;[0,10)&quot;  &quot;[20,30)&quot; &quot;[80,85)&quot; &quot;[80,85)&quot;</span></span></code></pre></div>
 <p>Ages greater than 85 are mapped to the oldest available category,
 <code>&quot;[80,85)&quot;</code>, and produce a warning when age is supplied
 directly. If a study already has age categories, pass the column name
@@ -503,7 +608,7 @@ through <code>age_category</code>.</p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-koffman2025stepcount" class="csl-entry">
 Koffman, Lily, Ciprian Crainiceanu, and John Muschelli. 2025.
 <span>“Comparing Step Counting Algorithms for High-Resolution Wrist
@@ -515,7 +620,7 @@ Accelerometry Data in <span>NHANES</span> 2011-2014.”</span>
 Koffman, Lily, and John Muschelli. 2025. <span>“Minute Level Step Counts
 and Physical Activity Data from the National Health and Nutrition
 Examination Survey (<span>NHANES</span>) 2011-2014.”</span>
-<em>PhysioNet</em>, ahead of print, May. <a href="https://doi.org/10.13026/9n0r-tv02">https://doi.org/10.13026/9n0r-tv02</a>.
+<em>PhysioNet</em>, May. <a href="https://doi.org/10.13026/9n0r-tv02">https://doi.org/10.13026/9n0r-tv02</a>.
 </div>
 </div>
 </div>
