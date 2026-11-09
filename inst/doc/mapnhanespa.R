@@ -63,6 +63,23 @@ map_nhanes_pa_quantiles(study_data, id = "id", age = NULL)
 map_nhanes_pa_quantiles(study_data, id = "id", sex = NULL, wave = 7)
 
 ## -----------------------------------------------------------------------------
+criteria <- nhanes_pa_wear_criteria()
+criteria[, c("criterion", "min_wear_hours", "pct_of_day", "min_valid_days",
+             "default")]
+unique(criteria[, c("min_wear_minutes", "note")])
+
+## -----------------------------------------------------------------------------
+compare <- rbind(
+  cbind(criterion = "1368 min, 3 days (default)",
+        map_nhanes_pa_quantiles(study_data, id = "id")),
+  cbind(criterion = "600 min, 4 days",
+        map_nhanes_pa_quantiles(study_data, id = "id",
+                                min_wear_minutes = 600, min_valid_days = 4))
+)
+compare[order(compare$id), c("id", "measure", "value", "criterion",
+                             "nhanes_quantile")]
+
+## -----------------------------------------------------------------------------
 nhanes_pa_quantile(
   value = 15000,
   age = 25,
